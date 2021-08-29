@@ -18,9 +18,9 @@ steps:
   commands:
   - sleep 5 # give docker enough time to start
   - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
-  - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg OCI_VERSION=$OCI_VERSION --tag localhost/prometheus:dev -f Containerfile
+  - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg OCI_VERSION=$OCI_VERSION --tag localhost/builder:dev -f Containerfile
   # to-do: run the container, add the tests, then publish
-  - buildah push localhost/prometheus:dev docker://docker.io/gautada/prometheus:$OCI_VERSION
+  - buildah push localhost/builder:dev docker://docker.io/gautada/builder:$OCI_VERSION
   - buildah images
   
 
