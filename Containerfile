@@ -1,4 +1,6 @@
-FROM alpine:3.14.1
+ARG ALPINE_TAG=3.14.1
+
+FROM alpine:#ALPINE_TAG
 
 RUN apk add --no-cache tzdata
 
@@ -25,9 +27,11 @@ USER $USER
 WORKDIR /home/bob
 
 COPY Test.Containerfile /home/bob/Containerfile
-RUN echo "buildah images" > ~/.ash_history \
- && echo "buildah bud --file Containerfile --tag localhost/bob:test" > ~/.ash_history \
- && echo "buildah login" >> ~/.ash_history \
- && echo "buildah push localhost/bob:test docker://docker.io/gautada/bob:test" > ~/.ash_history
 
+RUN echo "buildah images" > ~/.ash_history \
+ && echo "buildah bud --file Containerfile --tag localhost/bob:test" >> ~/.ash_history \
+ && echo "buildah login" >> ~/.ash_history \
+ && echo "buildah push localhost/bob:test docker://docker.io/gautada/bob:test" >> ~/.ash_history
+
+# Sleep for an hour and a half (90 minutes)
 CMD ["/bin/sleep", "5400"]
