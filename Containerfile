@@ -10,7 +10,9 @@ RUN apk add --no-cache buildah podman iputils
 RUN mv /etc/containers/storage.conf /etc/containers/storage.conf~ \
  && sed 's/#mount_program/mount_program/' /etc/containers/storage.conf~ > /etc/containers/storage.conf \
  && echo "bob:10000:65536" >> /etc/subuid \
- && echo "bob:10000:65536" >> /etc/subgid
+ && echo "bob:10000:65536" >> /etc/subgid \
+ && chmod 4755 /usr/bin/newgidmap \
+ && chmod 4755 /usr/bin/newuidmap
 
 ARG USER=bob
 RUN addgroup $USER \
@@ -25,7 +27,7 @@ WORKDIR /home/bob
 COPY Test.Containerfile /home/bob/Containerfile
 RUN echo "buildah images" > ~/.ash_history \
  && echo "buildah bud --file Containerfile --tag localhost/bob:test" > ~/.ash_history \
- && echo "buildah login" > ~/.ash_history \
+ && echo "buildah login" >> ~/.ash_history \
  && echo "buildah push localhost/bob:test docker://docker.io/gautada/bob:test" > ~/.ash_history
 
-CMD ["/usr/bin/tail", "-f", "/dev/null"]
+CMD ["/bin/sleep", "5400"]

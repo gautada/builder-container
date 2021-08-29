@@ -7,17 +7,13 @@ This is a collection of tools to build OCI containers inside my k8s cluster.  Th
   
 [Podman in a rootless environment](https://github.com/containers/podman/blob/main/docs/tutorials/rootless_tutorial.md)
 
+https://www.redhat.com/sysadmin/podman-inside-kubernetes
+
 ## Development
 
-### Manual Environment
+### Manual Build
 
-#### Build
-
-```
-docker build --tag --no-cache builder:dev .
-```
-
-#### Run
+The builder container is a cornerstone component to the cicd system.  Therefore, sometimes the container must be built and deployed manually to get the initial system bootstrapped. 
 
 ```
 docker build --no-cache --tag builder:dev .
