@@ -3,6 +3,7 @@ type: kubernetes
 name: Continuous Integration
 
 steps:
+- name: integrate
   image: gautada/builder:v1.21.4_v3.2.3
   privileged: true
   environment:
@@ -11,8 +12,6 @@ steps:
     DOCKER_PASSWORD:
       from_secret: password.docker.io
     ALPINE_TAG: 3.14.2
-- name: integrate
-  
     OCI_VERSION: v1.21.4_v3.2.3
     OCI_CONTAINER: builder
     OCI_REPOSITORY: docker://docker.io/gautada
@@ -20,16 +19,6 @@ steps:
   - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
   - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --tag localhost/$OCI_CONTAINER:dev -f Containerfile
   - buildah push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION
-
-- name: test
-  
-    OCI_VERSION: v1.21.4_v3.2.3
-    OCI_CONTAINER: builder
-    OCI_REPOSITORY: docker://docker.io/gautada
-  commands:
-  - podman run hello-world
-  - ls -l
-  - sleep 300
 
 trigger:
   branch:
