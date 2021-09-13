@@ -26,3 +26,14 @@ docker push gautada/builder:$VERSION
 docker stop builder
 docker rm builder
 ```
+
+curl --unix-socket /tmp/podman-run-1000/podman/podman.sock http://localhost/_ping
+
+
+https://docs.podman.io/en/latest/markdown/podman-system-service.1.html
+https://github.com/containers/podman/blob/main/docs/tutorials/remote_client.md
+https://wiki.alpinelinux.org/wiki/Podman
+https://github.com/containers/podman/issues/11398
+    
+    https://www.redhat.com/sysadmin/podman-inside-container
+    
