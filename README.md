@@ -1,39 +1,89 @@
 # builder-container
 
-This is a collection of tools to build OCI containers inside my k8s cluster.  This is made up of several projects:
+This is a collection of tools to build OCI containers inside my k8s cluster.  This is made up of several applications and their and their dependencies:
 
 - [Buildah](https://buildah.io) - A tool that facilitates building OCI container images. +[repository](https://github.com/containers/buildah)+
--[Podman](https://podman.io) is a daemonless container engine for developing, managing, and running OCI Containers on your Linux System. Containers can either be run as root or in rootless mode.+[repository](https://github.com/containers/podman)+
+-[Podman](https://podman.io) is a daemonless container engine for developing, managing, and running OCI Containers on your Linux System.
+
+  ## Container
+
+  ### Versions
+
+  - September 14, 2021 [podman](https://podman.io/releases/) - Active version is [3.2 .3](https://pkgs.alpinelinux.org/packages?name=podman&branch=edge)
+
+  ### Manual
   
-[Podman in a rootless environment](https://github.com/containers/podman/blob/main/docs/tutorials/rootless_tutorial.md)
-
-https://www.redhat.com/sysadmin/podman-inside-kubernetes
-
-## Development
-
-### Manual Build
-
-The builder container is a cornerstone component to the cicd system.  Therefore, sometimes the container must be built and deployed manually to get the initial system bootstrapped. 
+  #### Build
 
 ```
-docker build --no-cache --tag builder:dev .
-docker run -d --name builder builder:dev
-BUILDAH_VERSION=$(docker exec -i -t builder /usr/bin/buildah --version | cut -d' ' -f3 | sed 's/ *$//g')
-PODMAN_VERSION=$(docker exec -i -t builder /usr/bin/podman --version | cut -d' ' -f3 | sed 's/ *$//g')
-VERSION="v${BUILDAH_VERSION}_v${PODMAN_VERSION//[$'\t\r\n ']}"
-docker tag builder:dev gautada/builder:$VERSION
-docker push gautada/builder:$VERSION
-docker stop builder
-docker rm builder
+docker build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache --tag builder:dev . 
+```
+  
+  #### Run
+
+Builder base mode runs the container for 5400 seconds (90 minutes). Basically launch and do nothing  
+
+```
+docker run -it -d --name builder --privileged --rm builder:dev
 ```
 
+Launch the SSH service to support the bastion. Add the -d flag for debug mode but it shutdown after each call
+```
+docker exec -it builder sudo /usr/bin/ssh-keygen -A
+docker exec -it builder sudo /usr/sbin/sshd -De -f /etc/ssh/sshd_config
+```
+
+Launch the podman API service. Time is set to 0 for no timeout
+```
+docker exec -it  builder /usr/bin/podman --log-level trace system service --time 0
+```
+
+Launch the remote client to run a container via (ssh)podman api service
+```
+docker exec -it builder /usr/bin/podman --remote run hello-world
+```
+
+Just run the ssh and api service from the get go.
+```
+docker run -it --name builder --privileged --rm builder:dev /builder-podman 86400
+```
+
+## Commands
+
+To launch the podman API service
+```
+podman system service --time 0
+```
+
+To test a local version of podman service
+```
 curl --unix-socket /tmp/podman-run-1000/podman/podman.sock http://localhost/_ping
+```
+
+## Configuration
+
+### SSH
+
+SSH must have the `/etc/ssh/sshd_config` set to `AllowTCPForwarding all`
+
+### Podman
+
+Podman remote connection configuration `podman system connection add build <--identity <path to priv key> ssh://<<ip/domain>>:<<port>>/tmp/podman-run-1000/podman/podman.sock`
+
+## Notes
+
+- [Podman inside Kubernets](https://www.redhat.com/sysadmin/podman-inside-kubernetes)
+- [Podman System Service](https://docs.podman.io/en/latest/markdown/podman-system-service.1.html)
+- [Podman Remote Service](https://github.com/containers/podman/blob/main/docs/tutorials/remote_client.md)
+- [Podman Stuff](https://wiki.alpinelinux.org/wiki/Podman)
+- [Podman Service Issues](https://github.com/containers/podman/issues/11398)
+- [Run podman in a container](https://www.redhat.com/sysadmin/podman-inside-container)
+    
+https://www.cloudassembler.com/post/remote-podman-service/
+    
+Test 567 - Run the sshd server with -D flag and verbose, exec podman service,  try to connect with remote client.
 
 
-https://docs.podman.io/en/latest/markdown/podman-system-service.1.html
-https://github.com/containers/podman/blob/main/docs/tutorials/remote_client.md
-https://wiki.alpinelinux.org/wiki/Podman
-https://github.com/containers/podman/issues/11398
-    
-    https://www.redhat.com/sysadmin/podman-inside-container
-    
+
+podman system connection add test --identity ~/.ssh/id_rsa ssh://root@192.168.5.110:2222/run/podman/podman.sock  
+
