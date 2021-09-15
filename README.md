@@ -37,3 +37,11 @@ https://github.com/containers/podman/issues/11398
     
     https://www.redhat.com/sysadmin/podman-inside-container
     
+https://www.cloudassembler.com/post/remote-podman-service/
+    
+Test 567 - Run the sshd server with -D flag and verbose, exec podman service,  try to connect with remote client.
+
+
+
+podman system connection add test --identity ~/.ssh/id_rsa ssh://root@192.168.5.110:2222/run/podman/podman.sock  
+

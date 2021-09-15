@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config
+/usr/bin/podman system service --time $1

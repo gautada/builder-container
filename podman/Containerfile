@@ -8,6 +8,8 @@
 #
 FROM registry.fedoraproject.org/fedora:latest
 
+EXPOSE 22
+
 # Don't include container-selinux and remove
 # directories used by yum that are just taking
 # up space.
@@ -42,3 +44,10 @@ RUN touch /var/lib/shared/overlay-layers/layers.lock \
 
 ENV _CONTAINERS_USERNS_CONFIGURED=""
 
+# dnf install openssh-server procps
+# ssh-keygen -A
+# ssh-keygen -f ~/.ssh/id_rsa -N ''
+# cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+# cat ~/.ssh/id_rsa
+# /usr/sbin/sshd -e -f /etc/ssh/sshd_config
+# podman system service --time 0
