@@ -12,12 +12,12 @@ steps:
     DOCKER_PASSWORD:
       from_secret: password.docker.io
     ALPINE_TAG: 3.14.2
-    OCI_VERSION: v1.21.4_v3.2.3
+    OCI_VERSION: 3.2.3-r1
     OCI_CONTAINER: builder
     OCI_REPOSITORY: docker://docker.io/gautada
   commands:
   - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
-  - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --tag localhost/$OCI_CONTAINER:dev -f Containerfile
+  - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev
   - buildah push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION
 
 trigger:

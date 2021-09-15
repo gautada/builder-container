@@ -1,4 +1,14 @@
 #!/bin/sh
 
+# Luanch the ssh bastion and podman API Service, keep alive for 24hours.
+
+DEFAULT_SLEEP=86400
+if [ ! -z $1 ] ; then
+ DEFAULT_SLEEP=$1
+fi
+
+if [ ! -f /etc/ssh/ssh_host_rsa_key ] ; then
+ sudo /usr/bin/ssh-keygen -A
+fi
 sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config
-/usr/bin/podman system service --time $1
+/usr/bin/podman --log-level debug system service --time $DEFAULT_SLEEP
