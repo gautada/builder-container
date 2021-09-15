@@ -57,11 +57,9 @@ RUN echo "%wheel         ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers \
 USER $USER
 WORKDIR /home/bob
 
-# dig -x 10.34.3.22 +short
-# droneci-server.cicd.svc.cluster.local
-RUN podman system connection add local --identity /home/bob/.ssh/id_rsa ssh://127.0.0.1:22/tmp/podman-run-1000/podman/podman.sock \
- && podman system connection add x86_64 --identity /home/bob/.ssh/id_rsa ssh://127.0.0.1:22/tmp/podman-run-1000/podman/podman.sock \
- && podman system connection add aarch64 --identity /home/bob/.ssh/id_rsa ssh://127.0.0.1:22/tmp/podman-run-1000/podman/podman.sock
+RUN podman system connection add local --identity /home/bob/.ssh/id_rsa ssh://loclhost:22/tmp/podman-run-1000/podman/podman.sock \
+ && podman system connection add x86_64 --identity /home/bob/.ssh/id_rsa ssh://x86-builder.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock \
+ && podman system connection add aarch64 --identity /home/bob/.ssh/id_rsa ssh://aarch64-builder.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock
 
 # ln -s /etc/builder/id_rsa.pub /home/bob/.ssh/authorized_keys \
 RUN mkdir -p /home/bob/.ssh \
