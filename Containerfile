@@ -62,7 +62,8 @@ RUN podman system connection add local ssh://127.0.0.1:22/tmp/podman-run-1000/po
  && podman system connection add aarch64 ssh://127.0.0.1:22/tmp/podman-run-1000/podman/podman.sock
 
 # ln -s /etc/builder/id_rsa.pub /home/bob/.ssh/authorized_keys \
-RUN ln -s /etc/builder/id_rsa /home/bob/.ssh/id_rsa \
+RUN mkdir -p /home/bob/.ssh \
+ && ln -s /etc/builder/id_rsa /home/bob/.ssh/id_rsa \
  && ln -s /etc/builder/id_rsa.pub /home/bob/.ssh/id_rsa.pub
  
 # Keygen was used for debugging it is insecure to release with this
