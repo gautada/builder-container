@@ -19,7 +19,7 @@ steps:
   commands:
   - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
   - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev
-  - buildah push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION_$OCI_CPU
+  - buildah push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU
   
 trigger:
   branch:
