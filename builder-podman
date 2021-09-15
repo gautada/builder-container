@@ -10,5 +10,10 @@ fi
 if [ ! -f /etc/ssh/ssh_host_rsa_key ] ; then
  sudo /usr/bin/ssh-keygen -A
 fi
+
+if [ ! -f /home/bob/.ssh/authorized_keys ] ; then
+ cat /home/bob/.ssh/id_rsa.pub > /home/bob/.ssh/authorized_keys
+fi
+
 sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config
 /usr/bin/podman --log-level debug system service --time $DEFAULT_SLEEP
