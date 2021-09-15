@@ -36,7 +36,9 @@ RUN apk add --no-cache buildah podman=$VERSION iputils openssh fuse-overlayfs sh
 RUN mv /etc/containers/storage.conf /etc/containers/storage.conf~ \
  && sed 's/#mount_program/mount_program/' /etc/containers/storage.conf~ > /etc/containers/storage.conf \
  && mv /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
- && sed 's/AllowTcpForwarding no/AllowTcpForwarding all/' /etc/ssh/sshd_config~ > /etc/ssh/sshd_config
+ && sed 's/AllowTcpForwarding no/AllowTcpForwarding all/' /etc/ssh/sshd_config~ > /etc/ssh/sshd_config \
+ && ln -s /etc/builder/id_rsa /etc/ssh/ssh_host_rsa_key  \
+ && ln -s /etc/builder/id_rsa.pub /etc/ssh/ssh_host_rsa_key.pub
 
 # System keygen was used for debugging it is insecure to release with this
 # RUN ssh-keygen -A \
@@ -55,8 +57,14 @@ RUN echo "%wheel         ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers \
 USER $USER
 WORKDIR /home/bob
 
-RUN podman system connection add build ssh://127.0.0.1:22/tmp/podman-run-1000/podman/podman.sock
+RUN podman system connection add local ssh://127.0.0.1:22/tmp/podman-run-1000/podman/podman.sock \
+ && podman system connection add x86_64 ssh://127.0.0.1:22/tmp/podman-run-1000/podman/podman.sock \
+ && podman system connection add aarch64 ssh://127.0.0.1:22/tmp/podman-run-1000/podman/podman.sock
 
+# ln -s /etc/builder/id_rsa.pub /home/bob/.ssh/authorized_keys \
+RUN ln -s /etc/builder/id_rsa /home/bob/.ssh/id_rsa \
+ && ln -s /etc/builder/id_rsa.pub /home/bob/.ssh/id_rsa.pub
+ 
 # Keygen was used for debugging it is insecure to release with this
 #
 # RUN ssh-keygen -f ~/.ssh/id_rsa -N '' \
