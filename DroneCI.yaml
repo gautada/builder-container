@@ -11,6 +11,10 @@ steps:
       from_secret: username.docker.io
     DOCKER_PASSWORD:
       from_secret: password.docker.io
+    ID_RSA_KEY:
+      from_secret: podman.ssh.key
+    ID_RSA_KEY_PUB:
+      from_secret: podman.ssh.pkey
     ALPINE_TAG: 3.14.2
     OCI_VERSION: 3.2.3-r1
     OCI_CONTAINER: builder
@@ -23,7 +27,7 @@ steps:
   - whoami
   - /builder-base 5
   - ls -l /home/bob/.ssh
-  - echo "]$ID_RSA_KEY["
+  - echo "$( echo $ID_RSA_KEY | base64 -d )["
   # - podman --remote --connection x86_64 run docker.io/hello-world
   # - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
   # - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev
