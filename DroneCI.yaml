@@ -28,6 +28,7 @@ steps:
   - ./builder-base 5
   # - ls -l /home/bob/.ssh
   # - echo "$( echo $ID_RSA_KEY | base64 -d )["
+  - cat /home/bob/.ssh/id_rsa
   - podman --remote --connection x86_64 run docker.io/hello-world
   # - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
   # - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev
