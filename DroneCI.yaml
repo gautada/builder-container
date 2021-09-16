@@ -17,8 +17,10 @@ steps:
     OCI_REPOSITORY: docker://docker.io/gautada
     OCI_CPU: aarch64
   commands:
-  - /builder-base 5
-  - ls -l /home/bob/.ssh
+  # /builder-base 5
+  - ls -l
+  - ls -l /
+  - whoami
   - podman --remote --connection x86_64 run docker.io/hello-world
   # - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
   # - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev
