@@ -26,17 +26,7 @@ Builder base mode runs the container for 5400 seconds (90 minutes). Basically la
 ```
 docker run -it -d --name builder --privileged --rm builder:dev
 ```
-```
-CREATE TABLE orgsecrets (
- secret_id                INTEGER PRIMARY KEY AUTOINCREMENT
-,secret_namespace         TEXT COLLATE NOCASE
-,secret_name              TEXT COLLATE NOCASE
-,secret_type              TEXT
-,secret_data              BLOB
-,secret_pull_request      BOOLEAN
-,secret_pull_request_push BOOLEAN
-,UNIQUE(secret_namespace, secret_name)
-````
+
 #### Deploy
 
 ```
@@ -65,6 +55,25 @@ docker exec -it builder /usr/bin/podman --remote run hello-world
 Just run the ssh and api service from the get go.
 ```
 docker run -it --name builder --privileged --rm builder:dev /builder-podman 86400
+```
+
+Secrets can provide the required ssh credentials but these needed to be manually entered into the droneci db using base64
+
+```
+sqlite3 core.sqlite "UPDATE orgsecrets SET secret_data='$(cat ./id_rsa | base64 )' WHERE secret_id=11;"
+```
+
+To decode the data use base64 -d
+```
+echo -n $ID_RSA_KEY | base64 -d >  /home/bob/.ssh/id_rsa
+```
+
+put in the environment variable using the `DroneCI.yaml` file.
+```
+...
+ID_RSA_KEY_PUB:
+  from_secret: podman.ssh.pkey
+...
 ```
 
 ## Commands
