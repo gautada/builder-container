@@ -26,7 +26,17 @@ Builder base mode runs the container for 5400 seconds (90 minutes). Basically la
 ```
 docker run -it -d --name builder --privileged --rm builder:dev
 ```
-
+```
+CREATE TABLE orgsecrets (
+ secret_id                INTEGER PRIMARY KEY AUTOINCREMENT
+,secret_namespace         TEXT COLLATE NOCASE
+,secret_name              TEXT COLLATE NOCASE
+,secret_type              TEXT
+,secret_data              BLOB
+,secret_pull_request      BOOLEAN
+,secret_pull_request_push BOOLEAN
+,UNIQUE(secret_namespace, secret_name)
+````
 #### Deploy
 
 ```
