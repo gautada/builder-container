@@ -17,6 +17,7 @@ steps:
     OCI_REPOSITORY: docker://docker.io/gautada
     OCI_CPU: aarch64
   commands:
+  - cat /builder-base
   - ls -l
   - ls -l /
   - whoami
