@@ -23,9 +23,9 @@ if [ ! -z $ID_RSA_KEY_PUB ] ; then
  fi
 fi
 
-# DEFAULT_SLEEP=5400
-# if [ ! -z $1 ] ; then
-#  DEFAULT_SLEEP=$1
-# fi
-# echo "Default sleep time: $DEFAULT_SLEEP seconds"
-# /bin/sleep $DEFAULT_SLEEP
+DEFAULT_SLEEP=5400
+if [ ! -z $1 ] ; then
+ DEFAULT_SLEEP=$1
+fi
+echo "Default sleep time: $DEFAULT_SLEEP seconds"
+/bin/sleep $DEFAULT_SLEEP
