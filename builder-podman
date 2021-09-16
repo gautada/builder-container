@@ -8,11 +8,28 @@ if [ ! -z $1 ] ; then
 fi
 
 if [ ! -f /etc/ssh/ssh_host_rsa_key ] ; then
- sudo /usr/bin/ssh-keygen -A
+ sudo cp /etc/builder/id_rsa /etc/ssh/sshd_host_rsa_key
+ sudo chmod 600 /etc/ssh/sshd_host_rsa_key
+fi
+
+if [ ! -f /etc/ssh/ssh_host_rsa_key.pub ] ; then
+ sudo cp /etc/builder/id_rsa.pub /etc/ssh/sshd_host_rsa_key.pub
+ sudo chmod 600 /etc/ssh/sshd_host_rsa_key.pub
+fi
+
+if [ ! -f /home/bob/.ssh/id_rsa ] ; then
+ cp /etc/builder/id_rsa > /home/bob/.ssh/id_rsa
+  sudo chmod 600 /home/bob/.ssh/id_rsa
+fi
+
+if [ ! -f /home/bob/.ssh/id_rsa.pub ] ; then
+ cp /etc/builder/id_rsa.pub > /home/bob/.ssh/id_rsa.pub
+  sudo chmod 600 /home/bob/.ssh/id_rsa.pub
 fi
 
 if [ ! -f /home/bob/.ssh/authorized_keys ] ; then
  cat /home/bob/.ssh/id_rsa.pub > /home/bob/.ssh/authorized_keys
+  sudo chmod 600 /home/bob/.ssh/authorized_keys
 fi
 
 sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config

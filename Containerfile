@@ -37,10 +37,10 @@ RUN mv /etc/containers/storage.conf /etc/containers/storage.conf~ \
  && sed 's/#mount_program/mount_program/' /etc/containers/storage.conf~ > /etc/containers/storage.conf \
  && mv /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
  && sed 's/AllowTcpForwarding no/AllowTcpForwarding all/' /etc/ssh/sshd_config~ > /etc/ssh/sshd_config \
- && cp /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
- && echo "StrictModes no" >> /etc/ssh/sshd_config \
- && ln -s /etc/builder/id_rsa /etc/ssh/ssh_host_rsa_key  \
- && ln -s /etc/builder/id_rsa.pub /etc/ssh/ssh_host_rsa_key.pub
+#  && cp /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
+#  && echo "StrictModes no" >> /etc/ssh/sshd_config \
+#  && ln -s /etc/builder/id_rsa /etc/ssh/ssh_host_rsa_key  \
+#  && ln -s /etc/builder/id_rsa.pub /etc/ssh/ssh_host_rsa_key.pub
 
 # System keygen was used for debugging it is insecure to release with this
 # RUN ssh-keygen -A \
@@ -64,9 +64,9 @@ RUN podman system connection add local --identity /home/bob/.ssh/id_rsa ssh://lo
  && podman system connection add aarch64 --identity /home/bob/.ssh/id_rsa ssh://aarch64-builder.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock
 
 # ln -s /etc/builder/id_rsa.pub /home/bob/.ssh/authorized_keys \
-RUN mkdir -p /home/bob/.ssh \
- && ln -s /etc/builder/id_rsa /home/bob/.ssh/id_rsa \
- && ln -s /etc/builder/id_rsa.pub /home/bob/.ssh/id_rsa.pub
+# RUN mkdir -p /home/bob/.ssh \
+#  && ln -s /etc/builder/id_rsa /home/bob/.ssh/id_rsa \
+#  && ln -s /etc/builder/id_rsa.pub /home/bob/.ssh/id_rsa.pub
  
 # Keygen was used for debugging it is insecure to release with this
 #
