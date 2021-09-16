@@ -85,6 +85,6 @@ COPY builder-base /builder-base
 COPY builder-podman /builder-podman
 
 # Default CMD is builder-base with a default 5400 (90 minutes) sleep parameter
-# CMD ["/builder-base, "5400"]
+CMD ["/builder-base", "5400"]
 
 
