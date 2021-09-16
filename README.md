@@ -5,27 +5,36 @@ This is a collection of tools to build OCI containers inside my k8s cluster.  Th
 - [Buildah](https://buildah.io) - A tool that facilitates building OCI container images. +[repository](https://github.com/containers/buildah)+
 -[Podman](https://podman.io) is a daemonless container engine for developing, managing, and running OCI Containers on your Linux System.
 
-  ## Container
+## Container
 
-  ### Versions
+### Versions
 
   - September 14, 2021 [podman](https://podman.io/releases/) - Active version is [3.2 .3](https://pkgs.alpinelinux.org/packages?name=podman&branch=edge)
 
-  ### Manual
+### Manual
   
-  #### Build
+#### Build
 
 ```
 docker build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache --tag builder:dev . 
 ```
   
-  #### Run
+#### Run
 
 Builder base mode runs the container for 5400 seconds (90 minutes). Basically launch and do nothing  
 
 ```
 docker run -it -d --name builder --privileged --rm builder:dev
 ```
+
+#### Deploy
+
+```
+docker login
+docker tag builder:dev docker.io/gautada/builder:3.2.3-r1-aarch64
+docker push docker.io/gautada/builder:3.2.3-r1-aarch64
+```
+
 
 Launch the SSH service to support the bastion. Add the -d flag for debug mode but it shutdown after each call
 ```

@@ -4,7 +4,7 @@ name: Continuous Integration
 
 steps:
 - name: Build (aarch64)
-  image: gautada/builder:v3.2.3-r1.aarch64
+  image: docker.io/gautada/builder:3.2.3-r1-aarch64
   privileged: true
   environment:
     DOCKER_USERNAME:
