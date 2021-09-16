@@ -57,6 +57,25 @@ Just run the ssh and api service from the get go.
 docker run -it --name builder --privileged --rm builder:dev /builder-podman 86400
 ```
 
+Secrets can provide the required ssh credentials but these needed to be manually entered into the droneci db using base64
+
+```
+sqlite3 core.sqlite "UPDATE orgsecrets SET secret_data='$(cat ./id_rsa | base64 )' WHERE secret_id=11;"
+```
+
+To decode the data use base64 -d
+```
+echo -n $ID_RSA_KEY | base64 -d >  /home/bob/.ssh/id_rsa
+```
+
+put in the environment variable using the `DroneCI.yaml` file.
+```
+...
+ID_RSA_KEY_PUB:
+  from_secret: podman.ssh.pkey
+...
+```
+
 ## Commands
 
 To launch the podman API service

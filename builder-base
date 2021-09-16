@@ -26,5 +26,5 @@ DEFAULT_SLEEP=5400
 if [ ! -z $1 ] ; then
  DEFAULT_SLEEP=$1
 fi
-echo "Default sleep time: $DEFAULT_SLEEP seconds"
+echo "Sleep time is $DEFAULT_SLEEP seconds"
 /bin/sleep $DEFAULT_SLEEP
