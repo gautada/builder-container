@@ -1,27 +1,31 @@
 #!/bin/sh
 
-# Simple blocking script for the build container to execute.  Default is set for 30minutes beyond the Drone pipeline timeout.
+# Simple script to apply the ssh keys to right location in the home directory
 
 if [ ! -d /home/bob/.ssh ] ; then
  mkdir /home/bob/.ssh
+ echo "Create the ~/.ssh directory"
 fi
 
 if [ ! -z $ID_RSA_KEY ] ; then
  if [ ! -f /home/bob/.ssh/id_rsa ] ; then
-  cat $ID_RSA_KEY >  /home/bob/.ssh/id_rsa
+  echo $ID_RSA_KEY | base64 -d >  /home/bob/.ssh/id_rsa
   chmod 600 /home/bob/.ssh/id_rsa
+  echo "Create the ssh key"
  fi
 fi
 
 if [ ! -z $ID_RSA_KEY_PUB ] ; then
  if [ ! -f ~/.ssh/id_rsa.pub ] ; then
-  cat $ID_RSA_KEY_PUB > /home/bob/.ssh/id_rsa.pub
+  echo $ID_RSA_KEY_PUB | base64 -d > /home/bob/.ssh/id_rsa.pub
   chmod 600 /home/bob/.ssh/id_rsa.pub
+  echo "Create the public ssh key"
  fi
 fi
 
 DEFAULT_SLEEP=5400
 if [ ! -z $1 ] ; then
- DEFAULT_SLEEP = $1
+ DEFAULT_SLEEP=$1
 fi
+echo "Default sleep time: $DEFAULT_SLEEP seconds"
 /bin/sleep $DEFAULT_SLEEP
