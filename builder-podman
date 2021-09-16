@@ -22,18 +22,18 @@ if [ ! -f /home/bob/.ssh ] ; then
 fi
 
 if [ ! -f /home/bob/.ssh/id_rsa ] ; then
- cp /etc/builder/id_rsa > /home/bob/.ssh/id_rsa
-  sudo chmod 600 /home/bob/.ssh/id_rsa
+ cp /etc/builder/id_rsa /home/bob/.ssh/id_rsa
+ chmod 600 /home/bob/.ssh/id_rsa
 fi
 
 if [ ! -f /home/bob/.ssh/id_rsa.pub ] ; then
- cp /etc/builder/id_rsa.pub > /home/bob/.ssh/id_rsa.pub
-  sudo chmod 600 /home/bob/.ssh/id_rsa.pub
+ cp /etc/builder/id_rsa.pub /home/bob/.ssh/id_rsa.pub
+ chmod 600 /home/bob/.ssh/id_rsa.pub
 fi
 
 if [ ! -f /home/bob/.ssh/authorized_keys ] ; then
  cat /home/bob/.ssh/id_rsa.pub > /home/bob/.ssh/authorized_keys
-  sudo chmod 600 /home/bob/.ssh/authorized_keys
+ chmod 600 /home/bob/.ssh/authorized_keys
 fi
 
 sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config
