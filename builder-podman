@@ -8,13 +8,17 @@ if [ ! -z $1 ] ; then
 fi
 
 if [ ! -f /etc/ssh/ssh_host_rsa_key ] ; then
- sudo cp /etc/builder/id_rsa /etc/ssh/sshd_host_rsa_key
- sudo chmod 600 /etc/ssh/sshd_host_rsa_key
+ sudo cp /etc/builder/id_rsa /etc/ssh/ssh_host_rsa_key
+ sudo chmod 600 /etc/ssh/ssh_host_rsa_key
 fi
 
 if [ ! -f /etc/ssh/ssh_host_rsa_key.pub ] ; then
- sudo cp /etc/builder/id_rsa.pub /etc/ssh/sshd_host_rsa_key.pub
- sudo chmod 600 /etc/ssh/sshd_host_rsa_key.pub
+ sudo cp /etc/builder/id_rsa.pub /etc/ssh/ssh_host_rsa_key.pub
+ sudo chmod 600 /etc/ssh/ssh_host_rsa_key.pub
+fi
+
+if [ ! -f /home/bob/.ssh ] ; then
+ mkdir ~/.ssh
 fi
 
 if [ ! -f /home/bob/.ssh/id_rsa ] ; then
