@@ -38,7 +38,7 @@ RUN mv /etc/containers/storage.conf /etc/containers/storage.conf~ \
  && mv /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
  && sed 's/AllowTcpForwarding no/AllowTcpForwarding all/' /etc/ssh/sshd_config~ > /etc/ssh/sshd_config \
  && cp /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
- && echo "StrictModes yes" >> /etc/ssh/sshd_config \
+ && echo "StrictModes no" >> /etc/ssh/sshd_config \
  && ln -s /etc/builder/id_rsa /etc/ssh/ssh_host_rsa_key  \
  && ln -s /etc/builder/id_rsa.pub /etc/ssh/ssh_host_rsa_key.pub
 
