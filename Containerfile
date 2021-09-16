@@ -36,7 +36,7 @@ RUN apk add --no-cache buildah podman=$VERSION iputils openssh fuse-overlayfs sh
 RUN mv /etc/containers/storage.conf /etc/containers/storage.conf~ \
  && sed 's/#mount_program/mount_program/' /etc/containers/storage.conf~ > /etc/containers/storage.conf \
  && mv /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
- && sed 's/AllowTcpForwarding no/AllowTcpForwarding all/' /etc/ssh/sshd_config~ > /etc/ssh/sshd_config \
+ && sed 's/AllowTcpForwarding no/AllowTcpForwarding all/' /etc/ssh/sshd_config~ > /etc/ssh/sshd_config 
 #  && cp /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
 #  && echo "StrictModes no" >> /etc/ssh/sshd_config \
 #  && ln -s /etc/builder/id_rsa /etc/ssh/ssh_host_rsa_key  \
