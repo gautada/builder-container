@@ -84,7 +84,7 @@ RUN podman system connection add local --identity /home/bob/.ssh/id_rsa ssh://lo
 COPY builder-base /builder-base
 COPY builder-podman /builder-podman
 
-# Default CMD is builder-base with a default 5400 (90 minutes) sleep parameter
-CMD ["/builder-base", "5400"]
+# Default entrypoint is builder-base with a default 5400 (90 minutes) sleep parameter. You can overload on run with entrypoint. 
+ENTRYPOINT ["/builder-base", "5400"]
 
 
