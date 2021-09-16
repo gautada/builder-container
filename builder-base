@@ -2,6 +2,10 @@
 
 # Simple blocking script for the build container to execute.  Default is set for 30minutes beyond the Drone pipeline timeout.
 
+if [ ! -d /home/bob/.ssh ] ; then
+ mkdir ~/.ssh
+fi
+
 if [ ! -z $ID_RSA_KEY ] ; then
  if [ ! -f /home/bob/.ssh/id_rsa ] ; then
   cat $ID_RSA_KEY >  /home/bob/.ssh/id_rsa
