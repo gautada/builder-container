@@ -31,7 +31,7 @@ COPY --from=config-alpine /etc/timezone  /etc/timezone
 
 EXPOSE 22
 ARG VERSION=3.2.3-r1
-RUN apk add --no-cache buildah podman=$VERSION iputils openssh fuse-overlayfs shadow slirp4netns sudo
+RUN apk add --no-cache buildah podman=$VERSION git iputils openssh fuse-overlayfs shadow slirp4netns sudo
 
 RUN mv /etc/containers/storage.conf /etc/containers/storage.conf~ \
  && sed 's/#mount_program/mount_program/' /etc/containers/storage.conf~ > /etc/containers/storage.conf \
@@ -59,9 +59,12 @@ RUN echo "%wheel         ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers \
 USER $USER
 WORKDIR /home/bob
 
-RUN podman system connection add local --identity /home/bob/.ssh/id_rsa ssh://loclhost:22/tmp/podman-run-1000/podman/podman.sock \
+RUN podman system connection add local --identity /home/bob/.ssh/id_rsa ssh://localhost:22/tmp/podman-run-1000/podman/podman.sock \
  && podman system connection add x86_64 --identity /home/bob/.ssh/id_rsa ssh://x86-builder.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock \
  && podman system connection add aarch64 --identity /home/bob/.ssh/id_rsa ssh://aarch64-builder.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock
+ 
+# podman --remote -c test rmi --force $(podman --remote -c test images -q)
+
 
 # ln -s /etc/builder/id_rsa.pub /home/bob/.ssh/authorized_keys \
 # RUN mkdir -p /home/bob/.ssh \

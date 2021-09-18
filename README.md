@@ -24,7 +24,8 @@ docker build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file C
 Builder base mode runs the container for 5400 seconds (90 minutes). Basically launch and do nothing  
 
 ```
-docker run -it -d --name builder --privileged --rm builder:dev
+docker run -d --name builder --privileged --rm builder:dev
+docker exec -it builder /bin/sh
 ```
 
 #### Deploy
