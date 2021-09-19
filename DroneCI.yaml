@@ -54,7 +54,7 @@ steps:
     OCI_VERSION: 3.2.3-r1
     OCI_CONTAINER: builder
     OCI_REPOSITORY: docker://docker.io/gautada
-    OCI_CPU1: aarch
+    OCI_CPU1: aarch64
     OCI_CPU2: x86_64
   commands:
   - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
