@@ -22,9 +22,9 @@ steps:
     OCI_CPU: aarch64
   commands:
   - ./builder-base 5
-  - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
-  - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev
-  - buildah push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU
+  # buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
+  # buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev
+  #  buildah push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU
   - ssh -o "StrictHostKeyChecking=no" -i /home/bob/.ssh/id_rsa bob@x86-builder.cicd.svc.cluster.local /bin/sleep 5
   # sleep 54000
   - podman --remote --connection x86_64 login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
