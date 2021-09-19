@@ -66,12 +66,11 @@ steps:
     OCI_CPU1: aarch
     OCI_CPU2: x86_64
   commands:
-  - sleep 5400
-  #  ./builder-base 5
-  # podman --remote manifest create $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION
-  # podman --remote manifest add $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-aarch64
-  # podman --remote manifest add $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-x86_64
-
+  - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
+  - buildah create localhost/$OCI_CONTAINER:man
+  - buildah manifest add localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU1
+  - buildah manifest add localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU2
+  - buildah push localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION
 trigger:
   branch:
   - dev
