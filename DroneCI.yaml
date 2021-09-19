@@ -3,17 +3,13 @@ type: kubernetes
 name: Continuous Integration
 
 steps:
-- name: Local Build - aarch64
+- name: build(aarch64) - local
   image: docker.io/gautada/builder:3.2.3-r1-aarch64
   privileged: true
   environment:
     DOCKER_USERNAME:
       from_secret: username.docker.io
     DOCKER_PASSWORD:
-      from_secret: password.docker.io
-    PODMAN_x86_64_USERNAME:
-      from_secret: username.docker.io
-    PODMAN_x86_64_PASSWORD:
       from_secret: password.docker.io
     ALPINE_TAG: 3.14.2
     OCI_VERSION: 3.2.3-r1
@@ -24,7 +20,7 @@ steps:
   - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
   - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev
   - buildah push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU
-- name: Podman Remote Build - x86_64
+- name: build(x86_64) - remote
   image: docker.io/gautada/builder:3.2.3-r1-aarch64
   privileged: true
   environment:
@@ -47,7 +43,7 @@ steps:
   - podman --remote --connection x86_64 login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
   - podman --remote --connection x86_64 build --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev .
   - podman --remote --connection x86_64 push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-x86_64
-- name: Manifest Combined Architectures
+- name: package
   image: docker.io/gautada/builder:3.2.3-r1-aarch64
   privileged: true
   environment:
@@ -55,11 +51,6 @@ steps:
       from_secret: username.docker.io
     DOCKER_PASSWORD:
       from_secret: password.docker.io
-    ID_RSA_KEY:
-      from_secret: podman.ssh.key
-    ID_RSA_KEY_PUB:
-      from_secret: podman.ssh.pkey
-    ALPINE_TAG: 3.14.2
     OCI_VERSION: 3.2.3-r1
     OCI_CONTAINER: builder
     OCI_REPOSITORY: docker://docker.io/gautada
@@ -67,7 +58,7 @@ steps:
     OCI_CPU2: x86_64
   commands:
   - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
-  - buildah create localhost/$OCI_CONTAINER:man
+  - buildah manifest create localhost/$OCI_CONTAINER:man
   - buildah manifest add localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU1
   - buildah manifest add localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU2
   - buildah push localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION
