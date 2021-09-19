@@ -11,9 +11,9 @@ steps:
       from_secret: username.docker.io
     DOCKER_PASSWORD:
       from_secret: password.docker.io
-    PODMAN_X86_64_USERNAME:
+    PODMAN_x86_64_USERNAME:
       from_secret: username.docker.io
-    PODMAN_X86_64_PASSWORD:
+    PODMAN_x86_64_PASSWORD:
       from_secret: password.docker.io
     ID_RSA_KEY:
       from_secret: podman.ssh.key
