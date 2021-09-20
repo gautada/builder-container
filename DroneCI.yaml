@@ -62,8 +62,9 @@ steps:
   - buildah manifest add localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU1
   - buildah manifest add localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU2
   - buildah push localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION
+
 trigger:
   branch:
-  - dev
+  - main
 
 
