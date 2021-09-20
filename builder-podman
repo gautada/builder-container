@@ -37,4 +37,4 @@ if [ ! -f /home/bob/.ssh/authorized_keys ] ; then
 fi
 
 sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config
-/usr/bin/podman --log-level debug system service --time $DEFAULT_SLEEP
+/usr/bin/podman --log-level warn system service --time $DEFAULT_SLEEP

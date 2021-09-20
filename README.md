@@ -24,7 +24,8 @@ docker build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file C
 Builder base mode runs the container for 5400 seconds (90 minutes). Basically launch and do nothing  
 
 ```
-docker run -it -d --name builder --privileged --rm builder:dev
+docker run -d --name builder --privileged --rm builder:dev
+docker exec -it builder /bin/sh
 ```
 
 #### Deploy
@@ -74,6 +75,14 @@ put in the environment variable using the `DroneCI.yaml` file.
 ID_RSA_KEY_PUB:
   from_secret: podman.ssh.pkey
 ...
+```
+
+Manual build of the x86 container
+```
+export DOCKER_HOST=192.168.4.204
+docker build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache --tag builder:dev . 
+docker tag builder:dev docker.io/gautada/builder:3.2.3-r1-x86_64
+docker push docker.io/gautada/builder:3.2.3-r1-x86_64
 ```
 
 ## Commands

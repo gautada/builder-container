@@ -1,0 +1,34 @@
+' https://github.com/plantuml-stdlib/C4-PlantUML#supported-diagram-types
+
+@startuml Context
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+' Macros:
+' Person(alias, label, ?descr, ?sprite, ?tags, $link)
+' Person_Ext
+' System(alias, label, ?descr, ?sprite, ?tags, $link)
+' SystemDb
+' SystemQueue
+' System_Ext
+' SystemDb_Ext
+' SystemQueue_Ext
+' Boundary(alias, label, ?type, ?tags, $link)
+' Enterprise_Boundary(alias, label, ?tags, $link)
+' System_Boundary
+' Rel(from, to, label, ?techn, ?descr, ?sprite, ?tags, $link)
+' - BiRel (bidirectional relationship)
+' - Force Direction: (U/Up, D/Down, L/Left, R/Right)
+
+System_Ext(GITHUB, 'Github Repository')
+System(DRONECI, 'Drone - Continuous Integration UI and Management')
+System(RUNNER, 'Drone Runner - Excution Service')
+System(BUILDER, 'Drone Builder - Execution Environment')
+System(BUILDSRV, 'Build Service - CPU Specific Build')
+
+Rel(GITHUB, DRONECI, 'Invoke Build', 'https/webhook')
+Rel(DRONECI, RUNNER, '?????', '???/???')
+Rel(RUNNER, BUILDER, 'Passes Conects', '???')
+Rel(BUILDER, BUILDERSRV, 'Remote Build for CPU', 'ssh/sock')
+
+@enduml
