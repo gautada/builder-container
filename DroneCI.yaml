@@ -20,6 +20,7 @@ steps:
     PODMAN_CERT_x86:
       from_secret: podman.cert.x86
   commands:
+  - /builder-base 5
   - podman --remote --connection arm build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache  --tag builder:dev .
   - podman --remote --connection arm tag builder:dev docker.io/gautada/builder:3.2.3-r1-arm
   - podman --remote --connection arm login --username=gautada --password=$DOCKER_PASSWORD docker.io
