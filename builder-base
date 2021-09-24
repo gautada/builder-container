@@ -8,23 +8,26 @@ if [ ! -d /home/bob/.ssh ] ; then
 fi
 
 
-if [ ! -f /home/bob/.ssh/id_rsa ] ; then
-echo -n $ID_RSA_KEY | base64 -d >  /home/bob/.ssh/id_rsa
- # echo $ID_RSA_KEY >  /home/bob/.ssh/id_rsa
- chmod 600 /home/bob/.ssh/id_rsa
- echo "Create the ssh key"
+if [ ! -f /home/bob/.ssh/podman_key_x86 ] ; then
+ echo -n $PODMAN_KEY_x86 | base64 -d >  /home/bob/.ssh/podman_key_x86
+ echo "Create the podman key x86"
 fi
 
-if [ ! -f ~/.ssh/id_rsa.pub ] ; then
- echo -n $ID_RSA_KEY_PUB | base64 -d > /home/bob/.ssh/id_rsa.pub
- # echo $ID_RSA_KEY_PUB > /home/bob/.ssh/id_rsa.pub
- chmod 600 /home/bob/.ssh/id_rsa.pub
- echo "Create the public ssh key"
+if [ ! -f /home/bob/.ssh/podman_key_x86.pub ] ; then
+ echo -n $PODMAN_CERT_x86 | base64 -d >  /home/bob/.ssh/podman_key_x86.pub
+ echo "Create the podman cert x86"
 fi
 
-DEFAULT_SLEEP=5400
-if [ ! -z $1 ] ; then
- DEFAULT_SLEEP=$1
+if [ ! -f /home/bob/.ssh/podman_key_arm ] ; then
+ echo -n $PODMAN_KEY_ARM | base64 -d >  /home/bob/.ssh/podman_key_arm
+ echo "Create the podman key arm"
 fi
-echo "Sleep time is $DEFAULT_SLEEP seconds"
-/bin/sleep $DEFAULT_SLEEP
+
+if [ ! -f /home/bob/.ssh/podman_key_arm.pub ] ; then
+ echo -n $PODMAN_CERT_ARM | base64 -d >  /home/bob/.ssh/podman_key_arm.pub
+ echo "Create the podman cert x86"
+fi
+
+chmod -R 0400 /home/bob/.ssh/*
+
+/bin/sleep $1

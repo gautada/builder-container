@@ -11,60 +11,33 @@ steps:
       from_secret: username.docker.io
     DOCKER_PASSWORD:
       from_secret: password.docker.io
-    ALPINE_TAG: 3.14.2
-    OCI_VERSION: 3.2.3-r1
-    OCI_CONTAINER: builder
-    OCI_REPOSITORY: docker://docker.io/gautada
-    OCI_CPU: aarch64
+    PODMAN_KEY_ARM:
+      from_secret: podman.key.arm
+    PODMAN_CERT_ARM:
+      from_secret: podman.cert.arm
+    PODMAN_KEY_x86:
+      from_secret: podman.key.x86
+    PODMAN_CERT_x86:
+      from_secret: podman.cert.x86
   commands:
-  - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
-  - buildah bud --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev
-  - buildah push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU
-- name: build(x86_64) - remote
-  image: docker.io/gautada/builder:3.2.3-r1-aarch64
-  privileged: true
-  environment:
-    DOCKER_USERNAME:
-      from_secret: username.docker.io
-    DOCKER_PASSWORD:
-      from_secret: password.docker.io
-    ID_RSA_KEY:
-      from_secret: podman.ssh.key
-    ID_RSA_KEY_PUB:
-      from_secret: podman.ssh.pkey
-    ALPINE_TAG: 3.14.2
-    OCI_VERSION: 3.2.3-r1
-    OCI_CONTAINER: builder
-    OCI_REPOSITORY: docker://docker.io/gautada
-    OCI_CPU: x86_64
-  commands:
-  - ./builder-base 5
-  - ssh -o "StrictHostKeyChecking=no" -i /home/bob/.ssh/id_rsa bob@x86-builder.cicd.svc.cluster.local /bin/sleep 5
-  - podman --remote --connection x86_64 login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
-  - podman --remote --connection x86_64 build --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$OCI_VERSION --file Containerfile --no-cache --tag localhost/$OCI_CONTAINER:dev .
-  - podman --remote --connection x86_64 push localhost/$OCI_CONTAINER:dev $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-x86_64
-- name: package
-  image: docker.io/gautada/builder:3.2.3-r1-aarch64
-  privileged: true
-  environment:
-    DOCKER_USERNAME:
-      from_secret: username.docker.io
-    DOCKER_PASSWORD:
-      from_secret: password.docker.io
-    OCI_VERSION: 3.2.3-r1
-    OCI_CONTAINER: builder
-    OCI_REPOSITORY: docker://docker.io/gautada
-    OCI_CPU1: aarch64
-    OCI_CPU2: x86_64
-  commands:
-  - buildah login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD docker.io
-  - buildah manifest create localhost/$OCI_CONTAINER:man
-  - buildah manifest add localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU1
-  - buildah manifest add localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION-$OCI_CPU2
-  - buildah push localhost/$OCI_CONTAINER:man $OCI_REPOSITORY/$OCI_CONTAINER:$OCI_VERSION
+  - podman --remote --connection arm build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache  --tag builder:dev .
+  - podman --remote --connection arm tag builder:dev docker.io/gautada/builder:3.2.3-r1-arm
+  - podman --remote --connection arm login --username=gautada --password=$DOCKER_PASSWORD docker.io
+  - podman --remote --connection arm push docker.io/gautada/builder:3.2.3-r1-arm
+  - podman --remote --connection x86 build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache  --tag builder:dev .
+  - podman --remote --connection x86 tag builder:dev docker.io/gautada/builder:3.2.3-r1-x86
+  - podman --remote --connection x86 login --username=gautada --password=$DOCKER_PASSWORD docker.io
+  - podman --remote --connection x86 push docker.io/gautada/builder:3.2.3-r1-x86
+  - podman --remote --connection arm manifest create builder:man
+  - podman --remote --connection arm manifest add builder:man docker.io/gautada/builder:3.2.3-r1-arm
+  - podman --remote --connection arm manifest add builder:man docker.io/gautada/builder:3.2.3-r1-x86
+  - podman --remote --connection arm tag builder:man docker.io/gautada/builder:3.2.3-r1
+  - podman --remote --connection arm login --username=gautada  --password=$DOCKER_PASSWORD docker.io
+  - podman --remote --connection arm push docker.io/gautada/builder:3.2.3-r1
+  - podman --remote --connection arm rmi builder:man
 
 trigger:
   branch:
-  - main
+  - dev
 
 

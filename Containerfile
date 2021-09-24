@@ -6,51 +6,33 @@ RUN apk add --no-cache tzdata
 RUN cp -v /usr/share/zoneinfo/America/New_York /etc/localtime
 RUN echo "America/New_York" > /etc/timezone
 
-# This was the podman build pulled from the APK repository
-# This worked for the most part but there was a WARN about
-# '/' mounting that was never resolved
-#
-# FROM alpine:$ALPINE_TAG as config-podman
-#
-# RUN apk add --no-cache build-base  git
-# RUN apk add --no-cache cni-plugins crun iptables ip6tables slirp4netns shadow-uidmap fuse-overlayfs  containers-common
-# RUN apk add --no-cache go gpgme-dev libseccomp-dev libassuan-dev go-md2man btrfs-progs-dev bash
-#
-# RUN git clone --branch v3.3.1 --depth 1 https://github.com/containers/podman.git
-#
-# WORKDIR /podman
-#
-# ENV BUILDTAGS="exclude_graphdriver_devicemapper seccomp apparmor"
-# RUN make podman
-# COPY --from=config-podman /podman/bin/podman /usr/sbin/podman
-
 FROM alpine:$ALPINE_TAG
 
 COPY --from=config-alpine /etc/localtime /etc/localtime
 COPY --from=config-alpine /etc/timezone  /etc/timezone
 
-EXPOSE 22
 ARG VERSION=3.2.3-r1
 RUN apk add --no-cache buildah podman=$VERSION git iputils openssh fuse-overlayfs shadow slirp4netns sudo
 
-RUN mv /etc/containers/storage.conf /etc/containers/storage.conf~ \
- && sed 's/#mount_program/mount_program/' /etc/containers/storage.conf~ > /etc/containers/storage.conf \
- && mv /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
- && sed 's/AllowTcpForwarding no/AllowTcpForwarding all/' /etc/ssh/sshd_config~ > /etc/ssh/sshd_config 
+# RUN mv /etc/containers/storage.conf /etc/containers/storage.conf~ \
+#  && sed 's/#mount_program/mount_program/' /etc/containers/storage.conf~ > /etc/containers/storage.conf \
+#  && mv /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
+#  && sed 's/AllowTcpForwarding no/AllowTcpForwarding all/' /etc/ssh/sshd_config~ > /etc/ssh/sshd_config
+
 #  && cp /etc/ssh/sshd_config /etc/ssh/sshd_config~ \
 #  && echo "StrictModes no" >> /etc/ssh/sshd_config \
 #  && ln -s /etc/builder/id_rsa /etc/ssh/ssh_host_rsa_key  \
 #  && ln -s /etc/builder/id_rsa.pub /etc/ssh/ssh_host_rsa_key.pub
-
 # System keygen was used for debugging it is insecure to release with this
 # RUN ssh-keygen -A \
 
 ARG USER=bob
 RUN addgroup $USER \
  && adduser -D -s /bin/sh -G $USER $USER \
- && echo "$USER:$USER" | chpasswd \
- && usermod --add-subuids 100000-165535 $USER \
- && usermod --add-subgids 100000-165535 $USER
+ && echo "$USER:$USER" | chpasswd
+ # \
+ # && usermod --add-subuids 100000-165535 $USER \
+ # && usermod --add-subgids 100000-165535 $USER
 
 # RUN chown $USER:$USER -R <</some/folder/path /multiple/folder/paths>>
 RUN echo "%wheel         ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers \
@@ -59,9 +41,8 @@ RUN echo "%wheel         ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers \
 USER $USER
 WORKDIR /home/bob
 
-RUN podman system connection add local --identity /home/bob/.ssh/id_rsa ssh://localhost:22/tmp/podman-run-1000/podman/podman.sock \
- && podman system connection add x86_64 --identity /home/bob/.ssh/id_rsa ssh://x86-builder.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock \
- && podman system connection add aarch64 --identity /home/bob/.ssh/id_rsa ssh://aarch64-builder.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock
+RUN podman system connection add x86 --identity /home/bob/.ssh/podman_key_x86 ssh://podman@podman-x86.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock \
+ && podman system connection add arm --identity /home/bob/.ssh/podman_key_arm ssh://podman@podman-arm.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock
  
 # podman --remote -c test rmi --force $(podman --remote -c test images -q)
 
@@ -85,7 +66,7 @@ RUN podman system connection add local --identity /home/bob/.ssh/id_rsa ssh://lo
 #  && echo podman --remote run hello-world  >> ~/.ash_history \
  
 COPY builder-base /builder-base
-COPY builder-podman /builder-podman
+# COPY builder-podman /builder-podman
 
 # Take-out
 # Default entrypoint is builder-base with a default 5400 (90 minutes) sleep parameter. You can overload on run with entrypoint.
