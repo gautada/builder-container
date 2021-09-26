@@ -15,14 +15,19 @@ This is a collection of tools to build OCI containers inside my k8s cluster.  Th
   
 #### Build
 
-podman --remote --connection arm build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache  --tag builder:dev .
+
+podman --remote --connection arm build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache --tag builder:dev .
+
+podman --remote --connection arm build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --format docker --platform linux/arm64/v8 --tag builder:dev .
 podman --remote --connection arm tag builder:dev docker.io/gautada/builder:3.2.3-r1-arm
 podman --remote --connection arm login --username=gautada docker.io
 podman --remote --connection arm push docker.io/gautada/builder:3.2.3-r1-arm
-podman --remote --connection x86 build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache  --tag builder:dev .
+
+podman --remote --connection x86 build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --format docker --platform linux/amd64 --tag builder:dev .
 podman --remote --connection x86 tag builder:dev docker.io/gautada/builder:3.2.3-r1-x86
 podman --remote --connection x86 login --username=gautada docker.io
 podman --remote --connection x86 push docker.io/gautada/builder:3.2.3-r1-x86
+
 podman --remote --connection arm manifest create builder:man
 podman --remote --connection arm manifest add builder:man docker.io/gautada/builder:3.2.3-r1-arm
 podman --remote --connection arm manifest add builder:man docker.io/gautada/builder:3.2.3-r1-x86
