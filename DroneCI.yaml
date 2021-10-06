@@ -31,6 +31,82 @@ steps:
   - /builder-base 5
   - podman --remote --connection x86 build --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$PODMAN_VERSION --file Containerfile --format docker --no-cache --platform linux/amd64 --tag builder:dev .
   
+- name: arm-push
+  image: docker.io/gautada/builder:arm-3.2.3-r1
+  privileged: true
+  environment:
+    DOCKERIO_USERNAME:
+      from_secret: username.docker.io
+    DOCKERIO_PASSWORD:
+      from_secret: password.docker.io
+    PODMAN_KEY:
+      from_secret: podman.key
+    PODMAN_CERT:
+      from_secret: podman.cert
+    PODMAN_VERSION: "3.2.3-r1"
+  commands:
+  - /builder-base 5
+  - podman --remote --connection arm tag builder:dev docker.io/gautada/builder:arm-$PODMAN_VERSION
+  - podman --remote --connection arm login --username=$DOCKERIO_USERNAME --password=$DOCKERIO_PASSWORD docker.io
+  - podman --remote --connection arm push docker.io/gautada/builder:arm-$PODMAN_VERSION
+
+- name: x86-push
+  image: docker.io/gautada/builder:arm-3.2.3-r1
+  privileged: true
+  environment:
+    DOCKERIO_USERNAME:
+      from_secret: username.docker.io
+    DOCKERIO_PASSWORD:
+      from_secret: password.docker.io
+    PODMAN_KEY:
+      from_secret: podman.key
+    PODMAN_CERT:
+      from_secret: podman.cert
+    PODMAN_VERSION: "3.2.3-r1"
+  commands:
+  - /builder-base 5
+  - podman --remote --connection x86 tag builder:dev docker.io/gautada/builder:x86-$PODMAN_VERSION
+  - podman --remote --connection x86 login --username=$DOCKERIO_USERNAME --password=$DOCKERIO_PASSWORD docker.io
+  - podman --remote --connection x86 push docker.io/gautada/builder:x86-$PODMAN_VERSION
+  
+- name: manifest-create
+  image: docker.io/gautada/builder:arm-3.2.3-r1
+  privileged: true
+  environment:
+    DOCKERIO_USERNAME:
+      from_secret: username.docker.io
+    DOCKERIO_PASSWORD:
+      from_secret: password.docker.io
+    PODMAN_KEY:
+      from_secret: podman.key
+    PODMAN_CERT:
+      from_secret: podman.cert
+    PODMAN_VERSION: "3.2.3-r1"
+  commands:
+  - /builder-base 5
+  - podman --remote --connection arm manifest create builder:man
+  - podman --remote --connection arm manifest add builder:man docker.io/gautada/builder:arm-$PODMAN_VERSION
+  - podman --remote --connection arm manifest add builder:man docker.io/gautada/builder:x86-$PODMAN_VERSION
+  - podman --remote --connection arm tag builder:man docker.io/gautada/builder:$PODMAN_VERSION
+  - podman --remote --connection x86 login --username=$DOCKERIO_USERNAME --password=$DOCKERIO_PASSWORD docker.io
+  - podman --remote --connection arm push docker.io/gautada/builder:$PODMAN_VERSION
+  
+- name: clean
+  image: docker.io/gautada/builder:arm-3.2.3-r1
+  privileged: true
+  environment:
+    PODMAN_KEY:
+      from_secret: podman.key
+    PODMAN_CERT:
+      from_secret: podman.cert
+    PODMAN_VERSION: "3.2.3-r1"
+  commands:
+  - /builder-base 5
+  - podman --remote --connection arm rmi builder:dev
+  - podman --remote --connection arm rmi docker.io/gautada/builder:arm-$PODMAN_VERSION
+  - podman --remote --connection x86 rmi builder:dev
+  - podman --remote --connection x86 rmi docker.io/gautada/builder:x86-$PODMAN_VERSION
+  - podman --remote --connection arm rmi builder:man
 
 trigger:
   branch:
