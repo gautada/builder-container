@@ -8,24 +8,14 @@ if [ ! -d /home/bob/.ssh ] ; then
 fi
 
 
-if [ ! -f /home/bob/.ssh/podman_key_x86 ] ; then
- echo -n $PODMAN_KEY_x86 | base64 -d >  /home/bob/.ssh/podman_key_x86
- echo "Create the podman key x86"
+if [ ! -f /home/bob/.ssh/podman_key ] ; then
+ echo -n $PODMAN_KEY | base64 -d >  /home/bob/.ssh/podman_key
+ echo "Create the podman key"
 fi
 
-if [ ! -f /home/bob/.ssh/podman_key_x86.pub ] ; then
- echo -n $PODMAN_CERT_x86 | base64 -d >  /home/bob/.ssh/podman_key_x86.pub
- echo "Create the podman cert x86"
-fi
-
-if [ ! -f /home/bob/.ssh/podman_key_arm ] ; then
- echo -n $PODMAN_KEY_ARM | base64 -d >  /home/bob/.ssh/podman_key_arm
- echo "Create the podman key arm"
-fi
-
-if [ ! -f /home/bob/.ssh/podman_key_arm.pub ] ; then
- echo -n $PODMAN_CERT_ARM | base64 -d >  /home/bob/.ssh/podman_key_arm.pub
- echo "Create the podman cert x86"
+if [ ! -f /home/bob/.ssh/podman_key.pub ] ; then
+ echo -n $PODMAN_CERT | base64 -d >  /home/bob/.ssh/podman_key.pub
+ echo "Create the podman cert"
 fi
 
 chmod -R 0400 /home/bob/.ssh/*

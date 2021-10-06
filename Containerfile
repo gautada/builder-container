@@ -41,8 +41,8 @@ RUN echo "%wheel         ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers \
 USER $USER
 WORKDIR /home/bob
 
-RUN podman system connection add x86 --identity /home/bob/.ssh/podman_key_x86 ssh://podman@podman-x86.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock \
- && podman system connection add arm --identity /home/bob/.ssh/podman_key_arm ssh://podman@podman-arm.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock
+RUN podman system connection add x86 --identity /home/bob/.ssh/podman_key ssh://podman@podman-x86.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock \
+ && podman system connection add arm --identity /home/bob/.ssh/podman_key ssh://podman@podman-arm.cicd.svc.cluster.local:22/tmp/podman-run-1000/podman/podman.sock
  
 # podman --remote -c test rmi --force $(podman --remote -c test images -q)
 

@@ -3,41 +3,34 @@ type: kubernetes
 name: Continuous Integration
 
 steps:
-- name: build(aarch64) - local
-  image: docker.io/gautada/builder:3.2.3-r1
+- name: arm-build
+  image: docker.io/gautada/builder:arm-3.2.3-r1
   privileged: true
   environment:
-    DOCKER_USERNAME:
-      from_secret: username.docker.io
-    DOCKER_PASSWORD:
-      from_secret: password.docker.io
-    PODMAN_KEY_ARM:
-      from_secret: podman.key.arm
-    PODMAN_CERT_ARM:
-      from_secret: podman.cert.arm
-    PODMAN_KEY_x86:
-      from_secret: podman.key.x86
-    PODMAN_CERT_x86:
-      from_secret: podman.cert.x86
+    PODMAN_KEY:
+      from_secret: podman.key
+    PODMAN_CERT:
+      from_secret: podman.cert
+    ALPINE_TAG: "3.14.2"
+    PODMAN_VERSION: "3.2.3-r1"
   commands:
   - /builder-base 5
-  - podman --remote --connection arm build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --format docker --no-cache --platform linux/arm64/v8 --tag builder:dev .
-  - podman --remote --connection arm tag builder:dev docker.io/gautada/builder:3.2.3-r1-arm
-  - podman --remote --connection arm login --username=gautada --password=$DOCKER_PASSWORD docker.io
-  - podman --remote --connection arm push docker.io/gautada/builder:3.2.3-r1-arm
+  - podman --remote --connection arm build --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$PODMAN_VERSION --file Containerfile --format docker --no-cache --platform linux/arm64/v8 --tag builder:dev .
+
+- name: x86-build
+  image: docker.io/gautada/builder:arm-3.2.3-r1
+  privileged: true
+  environment:
+    PODMAN_KEY:
+      from_secret: podman.key
+    PODMAN_CERT:
+      from_secret: podman.cert
+    ALPINE_TAG: "3.14.2"
+    PODMAN_VERSION: "3.2.3-r1"
+  commands:
+  - /builder-base 5
+  - podman --remote --connection x86 build --build-arg ALPINE_TAG=$ALPINE_TAG --build-arg VERSION=$PODMAN_VERSION --file Containerfile --format docker --no-cache --platform linux/amd64 --tag builder:dev .
   
-  - podman --remote --connection x86 build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --format docker --no-cache --platform linux/amd64 --tag builder:dev .
-  - podman --remote --connection x86 tag builder:dev docker.io/gautada/builder:3.2.3-r1-x86
-  - podman --remote --connection x86 login --username=gautada --password=$DOCKER_PASSWORD docker.io
-  - podman --remote --connection x86 push docker.io/gautada/builder:3.2.3-r1-x86
-  
-  - podman --remote --connection arm manifest create builder:man
-  - podman --remote --connection arm manifest add builder:man docker.io/gautada/builder:3.2.3-r1-arm
-  - podman --remote --connection arm manifest add builder:man docker.io/gautada/builder:3.2.3-r1-x86
-  - podman --remote --connection arm tag builder:man docker.io/gautada/builder:3.2.3-r1
-  - podman --remote --connection arm login --username=gautada  --password=$DOCKER_PASSWORD docker.io
-  - podman --remote --connection arm push docker.io/gautada/builder:3.2.3-r1
-  - podman --remote --connection arm rmi builder:man
 
 trigger:
   branch:
