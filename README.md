@@ -1,9 +1,9 @@
 # builder-container
 
-This is a collection of tools to build OCI containers inside my k8s cluster.  This is made up of several applications and their and their dependencies:
+This is a collection of tools to build [Open Containers Initiative (OCI)](https://opencontainers.org) containers inside a k8s cluster.  This is the core base of a DevOps toolchain for a k8s cluster and is made up of several applications and their and their dependencies:
 
-- [Buildah](https://buildah.io) - A tool that facilitates building OCI container images. +[repository](https://github.com/containers/buildah)+
--[Podman](https://podman.io) is a daemonless container engine for developing, managing, and running OCI Containers on your Linux System.
+- **[Buildah](https://buildah.io)** - A tool that facilitates building OCI container images. +[repository](https://github.com/containers/buildah)+
+- **[Podman](https://podman.io)** - is a daemonless container engine for developing, managing, and running OCI Containers on your Linux System.
 
 ## Container
 
@@ -12,8 +12,33 @@ This is a collection of tools to build OCI containers inside my k8s cluster.  Th
   - September 14, 2021 [podman](https://podman.io/releases/) - Active version is [3.2 .3](https://pkgs.alpinelinux.org/packages?name=podman&branch=edge)
 
 ### Manual
-  
-#### Build
+
+As this is a core part of the build system for containers a manual build must be defined to provide a mechanism to boot-strap the build system.
+
+### Build
+
+As this is a core part of the build system a manual build must be available
+
+```
+docker build --build-arg ALPINE_TAG=3.15.4 --build-arg PODMAN_VERSION=3.4.7-r0 --file Containerfile --tag podman:dev .
+```
+
+### Run
+
+```
+docker run --name podman --privileged --rm podman:dev
+docker exec -it podman /bin/sh
+```
+
+**Note:** Need to define a script that will help bootstrap the container build system.
+
+
+
+
+
+
+
+
 
 
 podman --remote --connection arm build --build-arg ALPINE_TAG=3.14.2 --build-arg VERSION=3.2.3-r1 --file Containerfile --no-cache --tag builder:dev .
